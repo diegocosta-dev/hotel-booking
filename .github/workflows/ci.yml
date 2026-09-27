@@ -1,0 +1,89 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    name: PHP ${{ matrix.php }} · Craft ${{ matrix.craft }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['8.2', '8.4']
+        # '5.0.0' = the minimum Craft version we support; 'latest' = newest Craft 5.x.
+        # We pin Craft itself rather than using --prefer-lowest for everything: the lowest
+        # versions of Craft's own transitive dependencies don't work together, and no real
+        # site would ever install that combination.
+        craft: ['5.0.0', 'latest']
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: hotelbooking_test
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 -proot"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      COMPOSER_ROOT_VERSION: 1.0.0
+      CRAFT_DB_DSN: mysql:host=127.0.0.1;port=3306;dbname=hotelbooking_test
+      CRAFT_DB_USER: root
+      CRAFT_DB_PASSWORD: root
+      CRAFT_DB_TABLE_PREFIX: ''
+      CRAFT_DB_SCHEMA: ''
+      CRAFT_SECURITY_KEY: ci-security-key
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: bcmath, curl, dom, intl, json, mbstring, openssl, pcre, pdo, pdo_mysql, zip, gd
+          coverage: none
+
+      - name: Validate composer.json
+        run: composer validate --no-plugins --no-check-publish --no-check-lock
+
+      - name: Pin minimum Craft version
+        if: matrix.craft != 'latest'
+        run: |
+          # Composer blocks versions with security advisories by default; old Craft releases have some.
+          composer config audit.block-insecure false
+          composer require --no-update "craftcms/cms:${{ matrix.craft }}"
+
+      - uses: ramsey/composer-install@v3
+        with:
+          dependency-versions: highest
+
+      - name: Show Craft version
+        run: composer show craftcms/cms | grep -E '^versions'
+
+      - name: Build Codeception actors
+        run: vendor/bin/codecept build
+
+      - name: ECS
+        run: composer check-cs
+
+      - name: PHPStan
+        run: composer phpstan
+
+      - name: Unit tests
+        run: composer test:unit
+
+      - name: Integration tests
+        run: composer test:integration

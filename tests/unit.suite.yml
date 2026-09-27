@@ -1,0 +1,6 @@
+# Pure PHP unit tests: no Craft bootstrap, no database.
+# Only classes under src/domain may be exercised here.
+actor: UnitTester
+modules:
+  enabled:
+    - Asserts

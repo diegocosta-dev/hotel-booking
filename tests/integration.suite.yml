@@ -1,0 +1,6 @@
+# Integration tests: boots Craft against the separate test database (see tests/.env.example).
+actor: IntegrationTester
+modules:
+  enabled:
+    - Asserts
+    - \craft\test\Craft

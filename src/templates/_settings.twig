@@ -1,0 +1,86 @@
+{# @var plugin \diegocostadev\hotelbooking\Plugin #}
+{# @var settings \diegocostadev\hotelbooking\models\Settings #}
+{# @var overrides array Settings overridden in config/hotel-booking.php #}
+
+{% import '_includes/forms.twig' as forms %}
+
+{% macro configWarning(setting) -%}
+    {{ 'This is being overridden by the `{setting}` setting in `config/hotel-booking.php`.'|t('hotel-booking', {
+        setting: setting,
+    })|md(inlineOnly=true) }}
+{%- endmacro %}
+
+{% from _self import configWarning %}
+
+{{ forms.textField({
+    label: 'Currency'|t('hotel-booking'),
+    instructions: 'ISO 4217 code used for all prices and bookings (e.g. USD, EUR, BRL).'|t('hotel-booking'),
+    id: 'currency',
+    name: 'currency',
+    value: settings.currency,
+    maxlength: 3,
+    size: 5,
+    required: true,
+    errors: settings.getErrors('currency'),
+    warning: 'currency' in overrides ? configWarning('currency'),
+    disabled: 'currency' in overrides,
+}) }}
+
+{{ forms.textField({
+    label: 'Default check-in time'|t('hotel-booking'),
+    instructions: '24-hour format, hotel local time (e.g. 14:00).'|t('hotel-booking'),
+    id: 'checkInTime',
+    name: 'checkInTime',
+    value: settings.checkInTime,
+    maxlength: 5,
+    size: 6,
+    required: true,
+    errors: settings.getErrors('checkInTime'),
+    warning: 'checkInTime' in overrides ? configWarning('checkInTime'),
+    disabled: 'checkInTime' in overrides,
+}) }}
+
+{{ forms.textField({
+    label: 'Default check-out time'|t('hotel-booking'),
+    instructions: '24-hour format, hotel local time (e.g. 11:00).'|t('hotel-booking'),
+    id: 'checkOutTime',
+    name: 'checkOutTime',
+    value: settings.checkOutTime,
+    maxlength: 5,
+    size: 6,
+    required: true,
+    errors: settings.getErrors('checkOutTime'),
+    warning: 'checkOutTime' in overrides ? configWarning('checkOutTime'),
+    disabled: 'checkOutTime' in overrides,
+}) }}
+
+{{ forms.textField({
+    label: 'Booking reference prefix'|t('hotel-booking'),
+    instructions: 'Up to 8 uppercase letters or digits. References look like {example}.'|t('hotel-booking', {
+        example: settings.referencePrefix ~ '-20260926-0001',
+    }),
+    id: 'referencePrefix',
+    name: 'referencePrefix',
+    value: settings.referencePrefix,
+    maxlength: 8,
+    size: 10,
+    required: true,
+    errors: settings.getErrors('referencePrefix'),
+    warning: 'referencePrefix' in overrides ? configWarning('referencePrefix'),
+    disabled: 'referencePrefix' in overrides,
+}) }}
+
+{{ forms.textField({
+    label: 'Pending booking expiry (minutes)'|t('hotel-booking'),
+    instructions: 'Unconfirmed bookings expire after this many minutes and release their rooms.'|t('hotel-booking'),
+    id: 'pendingExpiryMinutes',
+    name: 'pendingExpiryMinutes',
+    type: 'number',
+    min: 5,
+    value: settings.pendingExpiryMinutes,
+    size: 6,
+    required: true,
+    errors: settings.getErrors('pendingExpiryMinutes'),
+    warning: 'pendingExpiryMinutes' in overrides ? configWarning('pendingExpiryMinutes'),
+    disabled: 'pendingExpiryMinutes' in overrides,
+}) }}

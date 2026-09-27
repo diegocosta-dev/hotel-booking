@@ -1,0 +1,8 @@
+{% extends '_layouts/cp.twig' %}
+
+{% set title = 'Hotel Booking'|t('hotel-booking') %}
+{% set selectedSubnavItem = craft.app.request.getSegment(2) ?: 'bookings' %}
+
+{% block content %}
+    <p>{{ 'This section will list bookings and customers once they are available.'|t('hotel-booking') }}</p>
+{% endblock %}

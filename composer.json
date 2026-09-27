@@ -1,0 +1,80 @@
+{
+  "name": "diegocosta-dev/craft-hotel-booking",
+  "description": "Accommodation booking for Craft CMS: rooms, availability, seasonal rates, bookings and customers.",
+  "type": "craft-plugin",
+  "keywords": [
+    "craft",
+    "cms",
+    "craftcms",
+    "craft-plugin",
+    "hotel",
+    "booking",
+    "reservations",
+    "accommodation"
+  ],
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Diego Costa",
+      "homepage": "https://github.com/diegocosta-dev"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/diegocosta-dev/craft-hotel-booking/issues?state=open",
+    "source": "https://github.com/diegocosta-dev/craft-hotel-booking",
+    "docs": "https://github.com/diegocosta-dev/craft-hotel-booking/blob/main/README.md",
+    "rss": "https://github.com/diegocosta-dev/craft-hotel-booking/releases.atom"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "require": {
+    "php": "^8.2",
+    "craftcms/cms": "^5.0.0",
+    "moneyphp/money": "^4.0"
+  },
+  "require-dev": {
+    "codeception/codeception": "^5.3",
+    "codeception/module-asserts": "^3.0",
+    "codeception/module-yii2": "^1.1.12",
+    "craftcms/ecs": "dev-main",
+    "craftcms/phpstan": "dev-main",
+    "phpstan/phpstan": "^2.1",
+    "vlucas/phpdotenv": "^5.6"
+  },
+  "autoload": {
+    "psr-4": {
+      "diegocostadev\\hotelbooking\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "diegocostadev\\hotelbooking\\tests\\": "tests/"
+    }
+  },
+  "extra": {
+    "handle": "hotel-booking",
+    "name": "Hotel Booking",
+    "developer": "Diego Costa",
+    "developerUrl": "https://github.com/diegocosta-dev",
+    "documentationUrl": "https://github.com/diegocosta-dev/craft-hotel-booking/blob/main/README.md",
+    "changelogUrl": "https://raw.githubusercontent.com/diegocosta-dev/craft-hotel-booking/main/CHANGELOG.md"
+  },
+  "scripts": {
+    "test": "codecept run",
+    "test:unit": "codecept run unit",
+    "test:integration": "codecept run integration",
+    "check-cs": "ecs check --ansi",
+    "fix-cs": "ecs check --ansi --fix",
+    "phpstan": "phpstan --memory-limit=1G"
+  },
+  "config": {
+    "sort-packages": true,
+    "platform": {
+      "php": "8.2"
+    },
+    "allow-plugins": {
+      "yiisoft/yii2-composer": true,
+      "craftcms/plugin-installer": true
+    }
+  }
+}
